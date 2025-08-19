@@ -6,9 +6,12 @@ import Link from "next/link";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/login`, {
         method: "POST",
@@ -23,16 +26,15 @@ export default function LoginPage() {
         alert("✅ Login successful");
       } else {
         const data = await res.json();
-        alert(`❌ Incorrect email or password: ${data.message}`);
+        setError(`❌ Incorrect email or password`);
       }
     } catch (error) {
-      alert(`❌ Connection error: ${error}`);
+      setError("❌ Connection error. Please try again.");
     }
   };
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-gray-100">
-      {/* Link at top right of the screen */}
       <div className="absolute top-4 right-4">
         <Link href="/signup" className="text-blue-600 hover:underline">
           Create Account
@@ -60,6 +62,9 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="border p-2 rounded placeholder-gray-400 text-black focus:outline-none"
         />
+
+        {/* Error message */}
+        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
         <button
           type="submit"
