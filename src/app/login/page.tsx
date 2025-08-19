@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,47 +9,63 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Aquí llamamos a nuestra API de login
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      alert("✅ Login exitoso");
-    } else {
-      alert("❌ Usuario o contraseña incorrectos");
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        alert("✅ Login successful");
+      } else {
+        const data = await res.json();
+        alert(`❌ Incorrect email or password: ${data.message}`);
+      }
+    } catch (error) {
+      alert(`❌ Connection error: ${error}`);
     }
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
+    <main className="relative min-h-screen flex items-center justify-center bg-gray-100">
+      {/* Link at top right of the screen */}
+      <div className="absolute top-4 right-4">
+        <Link href="/signup" className="text-blue-600 hover:underline">
+          Create Account
+        </Link>
+      </div>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-2xl shadow-md w-80 flex flex-col gap-4"
       >
         <h1 className="text-2xl font-bold text-center">Login</h1>
+
         <input
           type="email"
-          placeholder="Email"
+          placeholder="User"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded placeholder-gray-400 text-black focus:outline-none"
         />
+
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded placeholder-gray-400 text-black focus:outline-none"
         />
+
         <button
           type="submit"
           className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
         >
-          Entrar
+          Enter
         </button>
       </form>
     </main>
