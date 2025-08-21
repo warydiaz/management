@@ -39,7 +39,7 @@ export default function RegisterPage() {
     setErrors({});
 
     try {
-      const res = await fetch(`${process.env.URL_BACKEND}/user`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}:${process.env.NEXT_PUBLIC_PORT_TOURNAMENT}/user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, surname, role }),
