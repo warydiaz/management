@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import Link from "next/link";
 
 export default function LoginPage() {
+  const router = useRouter(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +25,8 @@ export default function LoginPage() {
         const data = await res.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
-        alert("✅ Login successful");
+        
+        router.push("/tourneys");
       } else {
         const data = await res.json();
         setError(`❌ Incorrect email or password`);
