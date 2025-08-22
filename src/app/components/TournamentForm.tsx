@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ para redirigir
 import { Tournament, BingoRoom } from "./types";
 import PrizesEditor from "./PrizesEditor";
 import BingoRoomsSelector from "./BingoRoomsSelector";
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export default function TournamentForm({ tournament, bingoRooms, setTournaments, setEditing }: Props) {
+  const router = useRouter();
+
   // Inicializamos partners, gamesName, dates y tablePrizes para evitar undefined
   const [editData, setEditData] = useState<Tournament>({
     ...tournament,
@@ -36,6 +39,13 @@ export default function TournamentForm({ tournament, bingoRooms, setTournaments,
 
       if (!res.ok) {
         const data = await res.json();
+
+        // ✅ Redirigir al login si son credenciales inválidas
+        if (data.message === "Invalid credentials") {
+          router.push("/login");
+          return;
+        }
+
         throw new Error(data.message || "Failed to update tournament");
       }
 
@@ -43,7 +53,12 @@ export default function TournamentForm({ tournament, bingoRooms, setTournaments,
       setTournaments((prev) => prev.map((t) => (t.tourneyId === updated.tourneyId ? updated : t)));
       setEditing(false);
     } catch (err: any) {
-      alert(`❌ Error: ${err.message}`);
+      // Si el error no era credenciales inválidas, mostrar alerta
+      if (err.message === "Invalid credentials") {
+        router.push("/login");
+      } else {
+        alert(`❌ Error: ${err.message}`);
+      }
     }
   };
 
