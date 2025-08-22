@@ -7,12 +7,16 @@ interface Props {
   bingoRooms: BingoRoom[];
 }
 
-export default function TournamentList({ tournaments, setTournaments, bingoRooms }: Props) {
+export default function TournamentList({
+  tournaments,
+  setTournaments,
+  bingoRooms,
+}: Props) {
   return (
     <div className="w-full max-w-4xl flex flex-col gap-4">
-      {tournaments.map((t) => (
+      {tournaments.map((t, idx) => (
         <TournamentCard
-          key={t.tourneyId}
+          key={t.tourneyId ?? idx} // fallback a idx si tourneyId aún no existe
           tournament={t}
           setTournaments={setTournaments}
           bingoRooms={bingoRooms}

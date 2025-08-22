@@ -11,7 +11,14 @@ interface Props {
 }
 
 export default function TournamentForm({ tournament, bingoRooms, setTournaments, setEditing }: Props) {
-  const [editData, setEditData] = useState<Tournament>({ ...tournament });
+  // Inicializamos partners, gamesName, dates y tablePrizes para evitar undefined
+  const [editData, setEditData] = useState<Tournament>({
+    ...tournament,
+    partners: tournament.partners || [],
+    gamesName: tournament.gamesName || [],
+    dates: tournament.dates || { start: "", end: "" },
+    tablePrizes: tournament.tablePrizes || [],
+  });
 
   const handleSave = async () => {
     try {
@@ -90,14 +97,25 @@ export default function TournamentForm({ tournament, bingoRooms, setTournaments,
       />
 
       {/* Bingo Rooms */}
-      <BingoRoomsSelector bingoRooms={bingoRooms} selectedRooms={editData.gamesName} setSelectedRooms={(rooms) => setEditData({ ...editData, gamesName: rooms })} />
+      <BingoRoomsSelector
+        bingoRooms={bingoRooms}
+        selectedRooms={editData.gamesName}
+        setSelectedRooms={(rooms) => setEditData({ ...editData, gamesName: rooms })}
+      />
 
       {/* Prizes */}
-      <PrizesEditor prizes={editData.tablePrizes} setPrizes={(prizes) => setEditData({ ...editData, tablePrizes: prizes })} />
+      <PrizesEditor
+        prizes={editData.tablePrizes}
+        setPrizes={(prizes) => setEditData({ ...editData, tablePrizes: prizes })}
+      />
 
       <div className="flex gap-2">
-        <button onClick={handleSave} className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Save</button>
-        <button onClick={() => setEditing(false)} className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">Cancel</button>
+        <button onClick={handleSave} className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+          Save
+        </button>
+        <button onClick={() => setEditing(false)} className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">
+          Cancel
+        </button>
       </div>
     </div>
   );
